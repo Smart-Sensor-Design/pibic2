@@ -18,11 +18,23 @@ PROPORCAO_TESTE = 0.15
 
 random.seed(123)
 
+
 # ==========================================
-# CRIAR PASTAS
+# 1. APAGAR DATASET ANTIGO
+# ==========================================
+
+if os.path.exists(DESTINO):
+    shutil.rmtree(DESTINO)
+
+print("Dataset antigo removido.")
+
+
+# ==========================================
+# 2. CRIAR NOVAS PASTAS
 # ==========================================
 
 for conjunto in ["train", "validation", "test"]:
+
     for classe in CLASSES:
 
         pasta = os.path.join(
@@ -33,13 +45,17 @@ for conjunto in ["train", "validation", "test"]:
 
         os.makedirs(pasta, exist_ok=True)
 
+
 # ==========================================
-# SEPARAR AS IMAGENS
+# 3. SEPARAR AS IMAGENS
 # ==========================================
 
 for classe in CLASSES:
 
-    pasta_origem = os.path.join(ORIGEM, classe)
+    pasta_origem = os.path.join(
+        ORIGEM,
+        classe
+    )
 
     imagens = [
         arquivo
@@ -53,8 +69,13 @@ for classe in CLASSES:
 
     total = len(imagens)
 
-    quantidade_treino = int(total * PROPORCAO_TREINO)
-    quantidade_validacao = int(total * PROPORCAO_VALIDACAO)
+    quantidade_treino = int(
+        total * PROPORCAO_TREINO
+    )
+
+    quantidade_validacao = int(
+        total * PROPORCAO_VALIDACAO
+    )
 
     treino = imagens[:quantidade_treino]
 
@@ -73,6 +94,11 @@ for classe in CLASSES:
         "test": teste
     }
 
+
+    # ==========================================
+    # 4. COPIAR AS IMAGENS
+    # ==========================================
+
     for nome_conjunto, lista_imagens in conjuntos.items():
 
         for imagem in lista_imagens:
@@ -89,12 +115,25 @@ for classe in CLASSES:
                 imagem
             )
 
-            shutil.copy2(origem, destino)
+            shutil.copy2(
+                origem,
+                destino
+            )
 
-    print(f"\nClasse: {classe}")
-    print(f"Total: {total}")
-    print(f"Treino: {len(treino)}")
-    print(f"Validação: {len(validacao)}")
-    print(f"Teste: {len(teste)}")
 
-print("\nDataset separado com sucesso!")
+    # ==========================================
+    # 5. MOSTRAR RESULTADOS
+    # ==========================================
+
+    print()
+    print("Classe:", classe)
+    print("Total:", total)
+    print("Treino:", len(treino))
+    print("Validação:", len(validacao))
+    print("Teste:", len(teste))
+
+
+print()
+print("==========================================")
+print("DATASET SEPARADO COM SUCESSO!")
+print("==========================================")

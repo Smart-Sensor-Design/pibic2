@@ -114,8 +114,68 @@ resultado_teste = modelo.evaluate(teste)
 
 print("Loss no teste:", resultado_teste[0])
 print("Accuracy no teste:", resultado_teste[1])
+# ==========================================
+# 8.1 ANALISAR ACERTOS POR CLASSE
+# ==========================================
 
+acertos_bonito = 0
+erros_bonito = 0
+acertos_feio = 0
+erros_feio = 0
 
+for imagens, etiquetas in teste:
+    previsoes = modelo.predict(imagens, verbose=0)
+
+    for previsao, etiqueta in zip(previsoes, etiquetas):
+        previsao = previsao[0]
+
+        if previsao >= 0.5:
+            classe_prevista = 1
+        else:
+            classe_prevista = 0
+
+        if etiqueta.numpy() == 0:
+            if classe_prevista == 0:
+                acertos_bonito += 1
+            else:
+                erros_bonito += 1
+
+        else:
+            if classe_prevista == 1:
+                acertos_feio += 1
+            else:
+                erros_feio += 1
+
+print()
+print("===== ANÁLISE POR CLASSE =====")
+print("Bonitos acertados:", acertos_bonito)
+print("Bonitos errados:", erros_bonito)
+print("Feios acertados:", acertos_feio)
+print("Feios errados:", erros_feio)
+# ==========================================
+# 8.2 VER PREVISÕES DAS IMAGENS DE TESTE
+# ==========================================
+
+print()
+print("===== PREVISÕES DAS IMAGENS DE TESTE =====")
+
+for imagens, etiquetas in teste:
+    previsoes = modelo.predict(imagens, verbose=0)
+
+    for previsao, etiqueta in zip(previsoes, etiquetas):
+
+        prob_feio = previsao[0]
+        prob_bonito = 1 - prob_feio
+
+        classe_real = "BONITO" if etiqueta.numpy() == 0 else "FEIO"
+        classe_prevista = "FEIO" if prob_feio >= 0.5 else "BONITO"
+
+        print(
+            f"Real: {classe_real} | "
+            f"Previsto: {classe_prevista} | "
+            f"Bonito: {prob_bonito:.1%} | "
+            f"Feio: {prob_feio:.1%}"
+        )
 # ==========================================
 # 9. TESTAR UMA IMAGEM NOVA
 # ==========================================
